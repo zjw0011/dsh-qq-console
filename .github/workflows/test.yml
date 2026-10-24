@@ -1,0 +1,28 @@
+name: test
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  rendercheck:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: 渲染自检（七个标签逐个空跑）
+        run: node test/rendercheck.mjs
+
+      - name: 接口自检（环境检查 + 离线兜底）
+        run: node test/console-api.mjs
+
+      - name: 语法检查
+        run: |
+          node --check index.js
+          node --check client.js
